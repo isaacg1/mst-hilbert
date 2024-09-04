@@ -1,0 +1,11 @@
+[package]
+name = "mst-hilbert"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+disjoint = "0.8.0"
+hilbert = "0.1.2"
+image = "0.25.2"
+num = "0.4.3"
+rand = "0.8.5"
