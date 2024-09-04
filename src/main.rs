@@ -30,7 +30,12 @@ enum Dir {
 type Color = [u8; 3];
 type ColorBase = [u8; 3];
 fn color_base_to_color(cb: ColorBase, color_size: u8) -> Color {
-    cb.map(|cbc| (cbc as u64 * 255 / (color_size - 1) as u64) as u8)
+    let denom = if color_size == 0 {
+        255
+    } else {
+        (color_size - 1) as u64
+    };
+    cb.map(|cbc| (cbc as u64 * 255 / denom) as u8)
 }
 fn make_image(scale: usize, seed: u64) -> RgbImage {
     assert!(scale > 0);
@@ -83,7 +88,11 @@ fn make_image(scale: usize, seed: u64) -> RgbImage {
     let mut index = BigUint::zero();
     while let Some((current_vert, dir)) = stack.pop() {
         // Draw hilbert color
-        let bits = color_size.next_power_of_two().checked_ilog2().unwrap_or(8);
+        let bits = if color_size > 0 {
+            color_size.next_power_of_two().checked_ilog2().unwrap_or(8)
+        } else {
+            8
+        };
         let point = Point::new_from_hilbert_index(0, &index, bits as usize, 3);
         let coord = point.get_coordinates();
         img.put_pixel(
